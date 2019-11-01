@@ -4,13 +4,23 @@
 #include <functional>
 #include <iostream>
 
+// deduction guide for std::func
+/*
+namespace std {
+
+template <typename RET, typename ...ARGS>
+function(RET (*)(ARGS...)) -> function<RET(ARGS...)>;
+
+} // namespace std
+*/
 
 namespace dtr {
 
-double now(){
+double now() {
   return std::chrono::duration_cast<
-    std::chrono::duration<double, std::ratio<1>>>(
-      std::chrono::high_resolution_clock::now().time_since_epoch()).count();
+             std::chrono::duration<double, std::ratio<1>>>(
+             std::chrono::high_resolution_clock::now().time_since_epoch())
+      .count();
 }
 
 struct Benchmark_result {
@@ -20,13 +30,14 @@ struct Benchmark_result {
   double average = -1.0;
 };
 
-template <std::size_t NUM_RUNS = 100>
-Benchmark_result benchmark(std::function<void()> func){
+template <typename RET, typename... ARGS>
+Benchmark_result benchmark(std::size_t num_runs,
+                           std::function<RET(ARGS...)> func, ARGS... args) {
   std::vector<double> timings;
-  timings.reserve(NUM_RUNS);
-  for (std::size_t i=0; i<NUM_RUNS; ++i){
+  timings.reserve(num_runs);
+  for (std::size_t i = 0; i < num_runs; ++i) {
     auto tic = now();
-    func();
+    func(args...);
     auto toc = now();
     timings.push_back(toc - tic);
   }
@@ -39,11 +50,17 @@ Benchmark_result benchmark(std::function<void()> func){
   return ret;
 }
 
+template <typename RET, typename... ARGS>
+Benchmark_result benchmark(std::size_t num_runs, RET (*func)(ARGS...),
+                           ARGS... args) {
+  std::function<RET(ARGS...)> wrapper = func;
+  return benchmark(num_runs, wrapper, args...);
+}
+
 } // namespace dtr
 
-std::ostream& operator<<(std::ostream& os, const dtr::Benchmark_result& res)
-{
-    os << "Min:" << res.min << " Max:" << res.max
-       << " Median:" << res.median << " Average:" << res.average;
-    return os;
+std::ostream &operator<<(std::ostream &os, const dtr::Benchmark_result &res) {
+  os << "Min:" << res.min << " Max:" << res.max << " Median:" << res.median
+     << " Average:" << res.average;
+  return os;
 }
