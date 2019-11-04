@@ -4,16 +4,6 @@
 #include <functional>
 #include <iostream>
 
-// deduction guide for std::func
-/*
-namespace std {
-
-template <typename RET, typename ...ARGS>
-function(RET (*)(ARGS...)) -> function<RET(ARGS...)>;
-
-} // namespace std
-*/
-
 namespace dtr {
 
 double now() {
@@ -32,12 +22,12 @@ struct Benchmark_result {
 
 template <typename RET, typename... ARGS>
 Benchmark_result benchmark(std::size_t num_runs,
-                           std::function<RET(ARGS...)> func, ARGS... args) {
+                           std::function<RET(ARGS...)> func, ARGS&&... args) {
   std::vector<double> timings;
   timings.reserve(num_runs);
   for (std::size_t i = 0; i < num_runs; ++i) {
     auto tic = now();
-    func(args...);
+    func(std::forward<ARGS>(args)...);
     auto toc = now();
     timings.push_back(toc - tic);
   }
@@ -52,9 +42,9 @@ Benchmark_result benchmark(std::size_t num_runs,
 
 template <typename RET, typename... ARGS>
 Benchmark_result benchmark(std::size_t num_runs, RET (*func)(ARGS...),
-                           ARGS... args) {
+                           ARGS&&... args) {
   std::function<RET(ARGS...)> wrapper = func;
-  return benchmark(num_runs, wrapper, args...);
+  return benchmark(num_runs, wrapper, std::forward<ARGS>(args)...);
 }
 
 } // namespace dtr
