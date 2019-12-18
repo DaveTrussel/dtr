@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(dtr LANGUAGES CXX)
 
+find_package(Threads REQUIRED)
+
 #
 # LIBRARY
 #
@@ -17,7 +19,7 @@ target_include_directories(dtr INTERFACE include)
 
 add_executable(test test/test.cpp)
 
-target_link_libraries(test dtr)
+target_link_libraries(test dtr Threads::Threads)
 
 set_target_properties(test PROPERTIES
     CXX_STANDARD 17
