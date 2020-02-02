@@ -1,6 +1,7 @@
 #include "dtr/math/math.hpp"
 #include "dtr/thread_safe.hpp"
 #include "dtr/time/time.hpp"
+#include "dtr/ipc/vector.hpp"
 
 #include <iostream>
 #include <thread>
@@ -17,6 +18,7 @@ int some_function(int init) {
 int global_int = 0;
 
 int main() {
+  // TODO split into seperate test cases
   std::function<int(int)> intfunc = [](int abc) { return abc + 1; };
   std::function<void(int)> voidfunc = [](int abc) { global_int += abc; };
   std::function adapter = some_function;
@@ -52,6 +54,10 @@ int main() {
   consumer.join();
   std::cout << "Remaining queue size " << queue.size() << std::endl;
 
+
   std::cout << "Timed pop: " << *queue.pop(std::chrono::milliseconds(100))
             << std::endl;
+
+  dtr::ipc::Vector<double, true> vector("shared-doubles");
+
 }
