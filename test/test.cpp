@@ -1,4 +1,5 @@
 #include "dtr/math/math.hpp"
+#include "dtr/scope_guard.hpp"
 #include "dtr/thread_safe.hpp"
 #include "dtr/time/time.hpp"
 #include "dtr/ipc/vector.hpp"
@@ -37,6 +38,8 @@ int main() {
   res = dtr::benchmark(100, some_function, 0);
   std::cout << "Benchmark result is: " << res << std::endl;
 
+  // TODO use unit test framework
+
   dtr::Safe_queue<int> queue;
 
   std::thread consumer([&] {
@@ -63,8 +66,19 @@ int main() {
   dtr::ipc::Vector<double, false> other_vector(vector_name);
 
   vector.get()->push_back(42);
-  std::cout << "This vector(0) " << vector.get()->at(0) << std::endl;
-  std::cout << "Other vecor(0) " << other_vector.get()->at(0) << std::endl;
+  std::cout << "vector(0) " << vector.get()->at(0) << std::endl;
+  std::cout << "other_vector(0) " << other_vector.get()->at(0) << std::endl;
+
+  int state = 42;
+  int other_state = 1337;
+  { // scope guard test
+    dtr::ScopeGuard state_guard([&state]{ state = 0; });
+    dtr::ScopeGuard other_guard([&other_state]{ other_state = 0; });
+    state_guard.commit();
+  }
+  std::cout << "state: " << state << std::endl;
+  std::cout << "oter_state: " << other_state << std::endl;
+
 
 
 }
