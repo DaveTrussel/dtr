@@ -58,6 +58,13 @@ int main() {
   std::cout << "Timed pop: " << *queue.pop(std::chrono::milliseconds(100))
             << std::endl;
 
-  dtr::ipc::Vector<double, true> vector("shared-doubles");
+  constexpr auto vector_name = "shared-doubles";
+  dtr::ipc::Vector<double, true> vector(vector_name);
+  dtr::ipc::Vector<double, false> other_vector(vector_name);
+
+  vector.get()->push_back(42);
+  std::cout << "This vector(0) " << vector.get()->at(0) << std::endl;
+  std::cout << "Other vecor(0) " << other_vector.get()->at(0) << std::endl;
+
 
 }
