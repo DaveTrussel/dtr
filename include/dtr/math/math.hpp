@@ -7,7 +7,7 @@ namespace dtr {
 
 template <typename CONTAINER>
 typename CONTAINER::value_type median(CONTAINER& con){
-  const typename CONTAINER::value_type M = con.size() / 2;
+  const size_t M = con.size() / 2;
   std::nth_element(con.begin(), con.begin() + M, con.end());
   return con[M];
 }
