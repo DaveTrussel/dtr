@@ -38,3 +38,5 @@ endif()
 
 
 install(TARGETS dtr test-dtr)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/dtr DESTINATION include)
+
