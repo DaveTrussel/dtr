@@ -20,18 +20,21 @@ target_include_directories(dtr INTERFACE include Boost::boost)
 # TEST
 #
 
-add_executable(test test/test.cpp)
+add_executable(test-dtr test/test.cpp)
 
-target_link_libraries(test dtr Threads::Threads ${LIBRT})
+target_link_libraries(test-dtr dtr Threads::Threads ${LIBRT})
 
-set_target_properties(test PROPERTIES
+set_target_properties(test-dtr PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
 )
 
 if(MSVC)
-  target_compile_options(test PRIVATE /W4 /WX)
+  target_compile_options(test-dtr PRIVATE /W4 /WX)
 else()
-  target_compile_options(test PRIVATE -Wall -Wextra -pedantic -Werror -Weffc++)
+  target_compile_options(test-dtr PRIVATE -Wall -Wextra -pedantic -Werror -Weffc++)
 endif()
+
+
+install(TARGETS dtr test-dtr)
