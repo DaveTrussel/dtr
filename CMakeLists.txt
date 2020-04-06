@@ -37,6 +37,9 @@ else()
 endif()
 
 
-install(TARGETS dtr test-dtr)
+install(TARGETS dtr test-dtr
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/dtr DESTINATION include)
 
